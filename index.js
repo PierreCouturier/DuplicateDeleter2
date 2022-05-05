@@ -16,8 +16,6 @@ let deleted_counter = 0
 let not_deleted_counter = 0
 let skip_counter = 0
 
-const sleep = (ms = 2000) => new Promise((resolve) => setTimeout(resolve, ms))
-
 async function askSeparator() {
 	const answers = await inquirer.prompt({
 		name: 'separator',
@@ -42,9 +40,22 @@ async function askIndex() {
 	index = answers.index
 }
 
+async function confirm() {
+	const answers = await inquirer.prompt({
+		name: 'confirm',
+		type: 'confirm',
+		message: 'Are you sure?',
+	})
+
+	if (answers.confirm) {
+		return true
+	} else {
+		process.exit(1)
+	}
+}
+
 async function deleteFiles() {
 	const spinner = createSpinner('Deleting files...\n').start()
-	await sleep()
 
 	fs.readdir(path, function (err, files) {
 		if (err) {
@@ -84,4 +95,5 @@ async function deleteFiles() {
 
 await askSeparator()
 await askIndex()
+await confirm()
 await deleteFiles()
